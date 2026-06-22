@@ -1,0 +1,12 @@
+{
+  "tenantId": "00000000-0000-0000-0000-000000000000",
+  "clientId": "11111111-1111-1111-1111-111111111111",
+  "certificateThumbprint": "ABCDEF0123456789ABCDEF0123456789ABCDEF01",
+  "exchangeOrganization": "contoso.onmicrosoft.com",
+  "domain": "contoso.com.au",
+  "mailboxTimeZone": "AUS Eastern Standard Time",
+  "mailboxLanguage": "en-AU",
+  "notificationSender": "it-automation@contoso.com.au",
+  "leaverMailboxDelegate": "",
+  "fallbackOneDriveDelegate": "it-admin@contoso.com.au"
+}

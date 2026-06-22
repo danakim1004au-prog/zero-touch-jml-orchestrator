@@ -1,0 +1,25 @@
+{
+  "SalesRep": {
+    "licenseSkuId": "f245ecc8-75af-4f8e-b61f-27d8114de5f3",
+    "groupIds": [
+      "aaaaaaaa-0000-0000-0000-000000000001",
+      "aaaaaaaa-0000-0000-0000-000000000002"
+    ],
+    "autopilotGroupId": "aaaaaaaa-0000-0000-0000-00000000000a",
+    "teamIds": [
+      "bbbbbbbb-0000-0000-0000-000000000001"
+    ]
+  },
+  "Engineer": {
+    "licenseSkuId": "cbdc14ab-d96c-4c30-b9f4-6ada7cdc1d46",
+    "groupIds": [
+      "aaaaaaaa-0000-0000-0000-000000000003",
+      "aaaaaaaa-0000-0000-0000-000000000004"
+    ],
+    "autopilotGroupId": "aaaaaaaa-0000-0000-0000-00000000000b",
+    "teamIds": [
+      "bbbbbbbb-0000-0000-0000-000000000002",
+      "bbbbbbbb-0000-0000-0000-000000000003"
+    ]
+  }
+}

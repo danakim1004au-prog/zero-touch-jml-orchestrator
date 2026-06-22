@@ -1,0 +1,14 @@
+# Real config identifies the tenant
+config/settings.json
+config/role-profiles.json
+
+# Run artifacts contain UPNs and temp-password notifications
+logs/
+
+# Real hire data
+data/new-hires.csv
+
+*.pfx
+*.cer
+.DS_Store
+docs/screenshot-checklist.md

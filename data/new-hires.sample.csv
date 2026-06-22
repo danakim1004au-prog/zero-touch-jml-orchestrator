@@ -1,0 +1,4 @@
+FirstName,LastName,JobTitle,Department,Role,ManagerEmail,StartDate
+Olivia,Nguyen,Account Executive,Sales,SalesRep,sales.manager@contoso.com.au,2026-07-01
+Jack,Thompson,Platform Engineer,Engineering,Engineer,eng.manager@contoso.com.au,2026-07-01
+Mia,Patel,Solutions Engineer,Engineering,Engineer,eng.manager@contoso.com.au,2026-07-08
