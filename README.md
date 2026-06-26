@@ -10,43 +10,39 @@ Australian MSP job ads treat "Autopilot + Intune zero-touch provisioning" as nea
 
 ## Architecture
 
-```
-new-hires.csv ──▶ Invoke-JmlOnboarding.ps1
-                      │
-                      ▼
-              JmlEngine.psm1  ── Invoke-JmlPipeline ──────────────────────────┐
-                      │   for each step:                                       │
-                      │     1. Test  (already done? → skip, idempotent)        │
-                      │     2. Action (with retry on throttling/429)           │
-                      │     3. push rollback onto stack                        │
-                      │   on failure: pop & run rollback stack in reverse      │
-                      ▼                                                        ▼
-   ┌──────────────────────────── onboarding steps ─────────────────┐   logs/jml-<run>.jsonl
-   │ 1 Create Entra user (temp pwd, force change at sign-in)       │   (one JSON event per
-   │ 2 Set usage location (AU) — license prerequisite              │    step: ts, user, step,
-   │ 3 Assign license from SKU map                                 │    outcome, error, ms)
-   │ 4 Add security/M365 groups from role profile                  │
-   │ 5 Add Autopilot device-assignment group → Intune profiles,    │
-   │   compliance policy, apps all flow from group membership      │
-   │ 6 Exchange Online: timezone, language, email-address policy   │
-   │ 7 Teams: add to role-profile teams                            │
-   │ 8 Send welcome sheet to manager (Graph sendMail)              │
-   └───────────────────────────────────────────────────────────────┘
+![Zero-Touch JML Orchestrator architecture](docs/zero-touch-jml-orchestrator_architecture.png)
 
-offboard-request ──▶ Invoke-JmlOffboarding.ps1   (ordered for security, no rollback —
-                      1 Disable sign-in            leavers are not unwound)
-                      2 Revoke refresh tokens
-                      3 Remove from all groups (capture list to record file)
-                      4 Convert mailbox to shared (preserves mail, frees the license)
-                      5 Remove licenses
-                      6 Intune: retire corporate devices
-                      7 Set OneDrive manager access (note for Purview retention)
-                      8 Write leaver record JSON (what was removed — re-hire insurance)
-```
+CSV in → `JmlEngine.psm1` runs an 8-step pipeline per user: each step is *test → act → push rollback*, so a re-run skips work already done (idempotent) and a failure unwinds the completed steps in reverse. Offboarding runs a fixed, security-ordered sequence (no rollback — leavers are not unwound). Every step writes one JSON event to `logs/jml-<run>.jsonl`.
 
 ## Why the order matters (offboarding)
 
 Disable **before** revoke: a revoked token can be re-acquired in seconds if the account can still sign in. Convert-to-shared **before** unlicensing: dropping the license first puts the mailbox in a 30-day soft-delete countdown. These orderings are the difference between "ran some commands" and "understands identity lifecycle."
+
+## Walkthrough
+
+**Onboarding — all 8 steps succeed.** One unattended run provisions the user end-to-end. Re-running the same CSV is safe: each step checks state first and skips what is already done (idempotent).
+
+![Successful onboarding run](docs/onboarding-success-idempotency.png)
+
+**Provisioned user in Entra.** The new starter lands with their role-profile groups attached — including the Autopilot device-assignment group that drives Intune enrollment. (Object IDs and email redacted.)
+
+![Provisioned user groups](docs/02-provisioned-user-overview.png)
+
+**Rollback on failure.** Step 6 fails on a bad Exchange timezone; the engine pops the rollback stack and unwinds steps 5 → 4 → 3 → 1 in reverse, leaving no half-provisioned account. Result line: `0 provisioned, 1 failed (rolled back)`.
+
+![Onboarding failure with automatic rollback](docs/03-onboarding-rollback.png)
+
+**JSONL audit trail.** Every step emits one structured event (`ts, subject, step, outcome, detail, durationMs`) — including the failure detail and each rolled-back step — for the whole run.
+
+![JSONL audit log](docs/04-jsonl-audit-log.png)
+
+**Offboarding — security-ordered sequence.** Disable → revoke tokens → strip groups → convert mailbox to shared → remove licenses → retire devices → set OneDrive manager access → write leaver record.
+
+![Offboarding run](docs/10-offboarding-terminal.png)
+
+**App registration / Graph + Exchange permissions.** Application permissions with admin consent granted — the least-privilege set the pipeline actually uses.
+
+![API permissions granted](docs/01.APIpermission.png)
 
 ## Tech stack
 
