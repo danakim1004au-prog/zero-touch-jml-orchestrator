@@ -1,0 +1,4 @@
+DisplayName,FirstName,LastName,UserPrincipalName,Department,JobTitle,Groups,LicenseSku
+Alice Nguyen,Alice,Nguyen,alice.nguyen@YOURTENANT.onmicrosoft.com,Finance,Accounts Officer,SG-Finance;SG-AllStaff,DEVELOPERPACK_E5
+Ben Carter,Ben,Carter,ben.carter@YOURTENANT.onmicrosoft.com,Operations,Field Technician,SG-Operations;SG-AllStaff,DEVELOPERPACK_E5
+Chloe Park,Chloe,Park,chloe.park@YOURTENANT.onmicrosoft.com,HR,HR Coordinator,SG-HR;SG-AllStaff,DEVELOPERPACK_E5
