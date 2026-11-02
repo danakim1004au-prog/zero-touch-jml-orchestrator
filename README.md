@@ -1,12 +1,18 @@
 # Zero-Touch JML Orchestrator
 
-End-to-end joiner/mover/leaver automation built as a **step pipeline with rollback**: Entra ID account → license → groups → Intune/Autopilot device enrollment groups → Exchange Online mailbox config → Teams membership, each step logged, retried, and reversible. If step 6 of 8 fails, the orchestrator unwinds the completed steps in reverse order instead of leaving a half-provisioned ghost account.
+End-to-end joiner/mover/leaver automation built as a step pipeline with rollback: Entra ID account → license → groups → Intune/Autopilot device enrollment groups → Exchange Online mailbox config → Teams membership. Each step is logged, retried and reversible. If step 6 of 8 fails, the orchestrator unwinds the completed steps in reverse order instead of leaving a half-provisioned account.
 
-> Sibling project: [`entra-onboarding-automation`](../entra-onboarding-automation) is the straightforward script version (create → license → group). This project is the production-shaped version of the same problem: orchestration engine, idempotency, rollback, structured logging, and the device layer (Autopilot/Intune) that makes onboarding genuinely *zero-touch* — the laptop ships sealed from the supplier and builds itself at the user's kitchen table.
+## Background
+
+This project grew out of the onboarding and offboarding automation I delivered as a freelance IT and systems consultant, working across Microsoft 365, Active Directory and Entra ID. It is an independent rebuild using sample data and contains no client code, configuration or information.
+
+It extends my earlier script-based approach (create → license → group) with an orchestration engine, idempotency, rollback, structured logging and an Autopilot/Intune device layer.
 
 ## Purpose
 
-Australian MSP job ads treat "Autopilot + Intune zero-touch provisioning" as near non-negotiable. The hard part isn't calling the APIs — it's what happens when call 6 of 8 fails at 5pm on a Friday. This project's value is the failure engineering: every step declares its own rollback, every run writes a JSONL audit trail, and re-running a half-finished user is safe because every step checks state before acting (idempotency).
+Scripted provisioning works until a step fails partway through. An account can end up created and licensed, but missing its mailbox configuration or group access, and someone then has to work out what ran and clean it up by hand.
+
+This project focuses on that failure path. Every step declares its own rollback, every run writes a JSONL audit trail, and re-running a half-finished user is safe because each step checks state before acting.
 
 ## Architecture
 
