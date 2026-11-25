@@ -16,7 +16,8 @@ This project focuses on that failure path. Every step declares its own rollback,
 
 ## Architecture
 
-![Zero-Touch JML Orchestrator architecture](docs/zero-touch-jml-orchestrator_architecture.png)
+<img width="960" height="540" alt="jml-orchestrator-demo" src="https://github.com/user-attachments/assets/ff569171-47d3-4414-a3bf-92ddb04aa0ef" />
+
 
 CSV in → `JmlEngine.psm1` runs an 8-step pipeline per user: each step is *test → act → push rollback*, so a re-run skips work already done (idempotent) and a failure unwinds the completed steps in reverse. Offboarding runs a fixed, security-ordered sequence (no rollback — leavers are not unwound). Every step writes one JSON event to `logs/jml-<run>.jsonl`.
 
